@@ -1,14 +1,15 @@
 package model
 
-import (
-	"fmt"
-	"strings"
-)
-
 type Match struct {
 	TotalKills int
 	Players    map[int]string
 	Kills      map[int]int
+}
+
+type MatchJSON struct {
+	TotalKills int
+	Players    []string
+	Kills      map[string]int
 }
 
 func NewMatch() *Match {
@@ -19,22 +20,17 @@ func NewMatch() *Match {
 	return match
 }
 
-func (m *Match) String() string {
-	var b strings.Builder
-
-	fmt.Fprintf(&b, "Total Kills: %d\n", m.TotalKills)
-	fmt.Fprintf(&b, "Players (%d):\n", len(m.Players))
-
-	for _, player := range m.Players {
-		fmt.Fprintf(&b, "  %s\n", player)
+func (m *Match) ToMatchJSON() MatchJSON {
+	matchJson := MatchJSON{
+		Players: make([]string, 0),
+		Kills:   make(map[string]int),
 	}
 
-	fmt.Fprintf(&b, "Kills:\n")
-
-	for player, kills := range m.Kills {
-		fmt.Fprintf(&b, "  %s - %d kill(s)\n", player, kills)
+	for id, name := range m.Players {
+		matchJson.Players = append(matchJson.Players, name)
+		matchJson.Kills[name] = m.Kills[id]
 	}
+	matchJson.TotalKills = m.TotalKills
 
-	return b.String()
-
+	return matchJson
 }
