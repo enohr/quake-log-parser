@@ -16,7 +16,6 @@ const (
 	KILLED_REGEX            = `Kill: (?P<killer_id>\d+) (?P<victim_id>\d+) (?P<mean_id>\d+)`
 	JOIN_GAME_REGEX         = `ClientConnect: (?P<player_id>\d+)`
 	USER_INFO_CHANGED_REGEX = `ClientUserinfoChanged: (?P<player_id>\d+) n\\(?P<player>.*?)\\`
-	WORLD_ID                = 1022
 )
 
 type Sequential struct {
@@ -57,39 +56,39 @@ func processMatches(scanner *bufio.Scanner) (map[string]*model.Match, error) {
 	for scanner.Scan() {
 		line := scanner.Text()
 
-		if initGameRegex.MatchString(line) {
+		switch {
+		case initGameRegex.MatchString(line):
 			if match != nil {
 				name := fmt.Sprintf("game-%d", totalGames)
 				matches[name] = match
 				totalGames++
 			}
 			match = model.NewMatch()
-		} else if m := joinGameRegex.FindStringSubmatch(line); m != nil {
+
+		case joinGameRegex.MatchString(line):
+			m := joinGameRegex.FindStringSubmatch(line)
 			player := m[1]
 
 			playerID, err := strconv.Atoi(player)
 			if err != nil {
 				continue
 			}
+			match.AddPlayer(playerID)
 
-			if _, ok := match.Players[playerID]; !ok {
-				match.Players[playerID] = ""
-			}
-
-		} else if m := userInfoChangedRegex.FindStringSubmatch(line); m != nil {
+		case userInfoChangedRegex.MatchString(line):
+			m := userInfoChangedRegex.FindStringSubmatch(line)
 			player, playerName := m[1], m[2]
 
 			playerID, err := strconv.Atoi(player)
 			if err != nil {
 				continue
 			}
+			match.UpdateUserInfo(playerID, playerName)
 
-			if _, ok := match.Players[playerID]; ok {
-				match.Players[playerID] = playerName
-			}
+		case killedRegex.MatchString(line):
+			m := killedRegex.FindStringSubmatch(line)
 
-		} else if m := killedRegex.FindStringSubmatch(line); m != nil {
-			killer, victim, _ := m[1], m[2], m[3]
+			killer, victim, mean := m[1], m[2], m[3]
 
 			killerID, err := strconv.Atoi(killer)
 
@@ -103,14 +102,14 @@ func processMatches(scanner *bufio.Scanner) (map[string]*model.Match, error) {
 				continue
 			}
 
-			if killerID == WORLD_ID {
-				match.Kills[victimID]--
-			} else if killerID != victimID {
-				match.Kills[killerID]++
-			}
-			match.TotalKills++
-		}
+			meanID, err := strconv.Atoi(mean)
 
+			if err != nil {
+				continue
+			}
+
+			match.ProcessKill(killerID, victimID, meanID)
+		}
 	}
 	if match != nil {
 		name := fmt.Sprintf("game-%d", totalGames)
