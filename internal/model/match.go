@@ -7,14 +7,14 @@ import (
 
 type Match struct {
 	TotalKills int
-	Players    []string
-	Kills      map[string]int
+	Players    map[int]string
+	Kills      map[int]int
 }
 
 func NewMatch() *Match {
 	match := &Match{
-		Players: make([]string, 0),
-		Kills:   make(map[string]int),
+		Players: make(map[int]string),
+		Kills:   make(map[int]int),
 	}
 	return match
 }
