@@ -14,6 +14,7 @@ import (
 const (
 	INIT_GAME_REGEX = `InitGame:\s.*`
 	KILLED_REGEX    = `\d+:\d+ Kill: \d+ \d+ \d+: (?P<killer>.*) killed (?P<victim>.*) by (?P<mean>.*)`
+	JOIN_GAME_REGEX = `ClientUserinfoChanged: \d+ n\\(?P<player>.*?)\\`
 )
 
 type Sequential struct {
@@ -33,19 +34,20 @@ func (s *Sequential) Parse(file string) (map[string]*model.Match, error) {
 	slog.Info("Starting parsing log")
 
 	scanner := bufio.NewScanner(f)
-	matches, err := processGame(scanner)
+	matches, err := processMatches(scanner)
 
 	slog.Info("Log parsing has finished")
 
 	return matches, err
 }
 
-func processGame(scanner *bufio.Scanner) (map[string]*model.Match, error) {
+func processMatches(scanner *bufio.Scanner) (map[string]*model.Match, error) {
 	var match *model.Match
 	matches := make(map[string]*model.Match)
 
 	initGameRegex := regexp.MustCompile(INIT_GAME_REGEX)
 	killedRegex := regexp.MustCompile(KILLED_REGEX)
+	joinGameRegex := regexp.MustCompile(JOIN_GAME_REGEX)
 
 	totalGames := 0
 
@@ -64,19 +66,17 @@ func processGame(scanner *bufio.Scanner) (map[string]*model.Match, error) {
 
 			if killer == "<world>" {
 				match.Kills[victim]--
-			} else {
+			} else if killer != victim {
 				match.Kills[killer]++
 			}
-
-			if !slices.Contains(match.Players, killer) {
-				match.Players = append(match.Players, killer)
-			}
-
-			if !slices.Contains(match.Players, victim) {
-				match.Players = append(match.Players, victim)
-			}
-
 			match.TotalKills++
+
+		} else if m := joinGameRegex.FindStringSubmatch(line); m != nil {
+			player := m[1]
+
+			if player != "<world>" && !slices.Contains(match.Players, player) {
+				match.Players = append(match.Players, player)
+			}
 		}
 
 	}
