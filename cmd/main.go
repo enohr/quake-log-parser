@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/enohr/quake-log-parser/internal/parser"
@@ -19,6 +20,7 @@ func main() {
 	}
 
 	for index, game := range games {
-		log.Printf("Match %s\n%+v\n", index, game)
+		fmt.Printf("Match %s\n%s", index, game)
+		fmt.Printf("------------------------------\n")
 	}
 }
