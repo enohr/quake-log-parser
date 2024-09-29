@@ -1,6 +1,7 @@
 package util
 
 import (
+	"hash/fnv"
 	"os"
 	"path/filepath"
 )
@@ -25,4 +26,11 @@ func SaveToFile(filename string, content []byte) error {
 	}
 
 	return nil
+
+}
+
+func GenerateNameFNVHash(name string) int {
+	h := fnv.New64a()
+	h.Write([]byte(name))
+	return int(h.Sum64())
 }

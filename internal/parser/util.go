@@ -1,12 +1,14 @@
 package parser
 
 import (
+	"bufio"
+	"os"
 	"strconv"
 
 	"github.com/enohr/quake-log-parser/internal/model"
 )
 
-func processLine(line string, match *model.Match) (bool, error) {
+func parseLine(line string, match *model.Match) (bool, error) {
 	switch {
 	case initGameRegex.MatchString(line):
 		return true, nil
@@ -67,4 +69,38 @@ func processLine(line string, match *model.Match) (bool, error) {
 		match.ProcessKill(killerID, victimID, meanID)
 	}
 	return false, nil
+}
+
+func splitIntoChunks(filename string) ([][]string, error) {
+	file, err := os.Open(filename)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	chunk := make([]string, 0)
+	chunks := make([][]string, 0)
+	scanner := bufio.NewScanner(file)
+
+	for scanner.Scan() {
+		line := scanner.Text()
+
+		if initGameRegex.MatchString(line) {
+			if len(chunk) > 0 {
+				chunks = append(chunks, chunk)
+			}
+
+			chunk = make([]string, 0)
+			chunk = append(chunk, line)
+		} else {
+			if len(chunk) > 0 {
+				chunk = append(chunk, line)
+			}
+		}
+	}
+	if len(chunk) > 0 {
+		chunks = append(chunks, chunk)
+	}
+
+	return chunks, nil
 }

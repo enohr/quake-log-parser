@@ -26,14 +26,14 @@ func (s *Sequential) Parse(file string) (map[string]*model.Match, error) {
 	slog.Info("Starting parsing log")
 
 	scanner := bufio.NewScanner(f)
-	matches, err := processMatches(scanner)
+	matches, err := parseMatches(scanner)
 
 	slog.Info("Log parsing has finished")
 
 	return matches, err
 }
 
-func processMatches(scanner *bufio.Scanner) (map[string]*model.Match, error) {
+func parseMatches(scanner *bufio.Scanner) (map[string]*model.Match, error) {
 	var match *model.Match
 	matches := make(map[string]*model.Match)
 
@@ -42,7 +42,7 @@ func processMatches(scanner *bufio.Scanner) (map[string]*model.Match, error) {
 	for scanner.Scan() {
 		line := scanner.Text()
 
-		newMatch, err := processLine(line, match)
+		newMatch, err := parseLine(line, match)
 		if err != nil {
 			return nil, err
 		}

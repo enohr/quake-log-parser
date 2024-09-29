@@ -1,9 +1,10 @@
 package model
 
 import (
-	"hash/fnv"
 	"log/slog"
 	"slices"
+
+	"github.com/enohr/quake-log-parser/util"
 )
 
 const (
@@ -39,14 +40,12 @@ func (m *Match) AddPlayer(playerID int) error {
 }
 
 func (m *Match) UpdateUserInfo(playerID int, playerName string) error {
-	h := fnv.New64a()
-	h.Write([]byte(playerName))
-	newID := int(h.Sum64())
+	oldHashID := util.GenerateNameFNVHash(playerName)
 
-	if player, ok := m.Players[newID]; ok {
+	if player, ok := m.Players[oldHashID]; ok {
 		slog.Info("User has logged again. Restoring his kills", "id", playerID, "name", playerName, "kills", player.Kills)
 		m.Players[playerID] = player
-		delete(m.Players, newID)
+		delete(m.Players, oldHashID)
 		return nil
 	}
 
@@ -59,13 +58,9 @@ func (m *Match) UpdateUserInfo(playerID int, playerName string) error {
 func (m *Match) DisconnectPlayer(playerID int) error {
 	if player, ok := m.Players[playerID]; ok {
 		name := player.Name
+		oldHashID := util.GenerateNameFNVHash(name)
 
-		// TODO: Move it to utils
-		h := fnv.New64a()
-		h.Write([]byte(name))
-		newID := h.Sum64()
-
-		m.Players[int(newID)] = player
+		m.Players[int(oldHashID)] = player
 		delete(m.Players, playerID)
 	}
 

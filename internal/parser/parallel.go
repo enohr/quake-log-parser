@@ -1,16 +1,14 @@
 package parser
 
 import (
-	"bufio"
 	"fmt"
-	"os"
 	"sync"
 
 	"github.com/enohr/quake-log-parser/internal/model"
 )
 
 const (
-	MAX_WORKERS = 5
+	MAX_WORKERS = 100
 )
 
 type Job struct {
@@ -76,42 +74,8 @@ func parseChunk(chunk []string) *model.Match {
 	match := model.NewMatch()
 
 	for _, line := range chunk {
-		processLine(line, match)
+		parseLine(line, match)
 	}
 
 	return match
-}
-
-func splitIntoChunks(filename string) ([][]string, error) {
-	file, err := os.Open(filename)
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
-
-	chunk := make([]string, 0)
-	chunks := make([][]string, 0)
-	scanner := bufio.NewScanner(file)
-
-	for scanner.Scan() {
-		line := scanner.Text()
-
-		if initGameRegex.MatchString(line) {
-			if len(chunk) > 0 {
-				chunks = append(chunks, chunk)
-			}
-
-			chunk = make([]string, 0)
-			chunk = append(chunk, line)
-		} else {
-			if len(chunk) > 0 {
-				chunk = append(chunk, line)
-			}
-		}
-	}
-	if len(chunk) > 0 {
-		chunks = append(chunks, chunk)
-	}
-
-	return chunks, nil
 }
