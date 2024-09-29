@@ -443,3 +443,51 @@ func TestUserReconnects(t *testing.T) {
 		}
 	}
 }
+
+func TestParsingMatchToMatchJSON(t *testing.T) {
+
+	testCases := []struct {
+		name     string
+		input    *Match
+		expected MatchJSON
+	}{
+		{
+			name: "User 1 reconnected",
+			input: &Match{
+				TotalKills: 5,
+				Players: map[int]*Player{
+					1: {Name: "Jogador 1", Kills: 3},
+					2: {Name: "Jogador 2", Kills: 2},
+				},
+				MeansOfDeath: map[MeanOfDeath]int{
+					7:  2,
+					10: 3,
+				},
+			},
+
+			expected: MatchJSON{
+				TotalKills: 5,
+				Players: []string{
+					"Jogador 1",
+					"Jogador 2",
+				},
+				Kills: map[string]int{
+					"Jogador 1": 3,
+					"Jogador 2": 2,
+				},
+				MeansOfDeath: map[string]int{
+					"MOD_ROCKET_SPLASH": 2,
+					"MOD_RAILGUN":       3,
+				},
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		matchJSON := tc.input.ToMatchJSON()
+		if !reflect.DeepEqual(matchJSON, tc.expected) {
+			t.Errorf("got %+v expected %+v", matchJSON, tc.expected)
+		}
+	}
+
+}
