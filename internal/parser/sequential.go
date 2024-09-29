@@ -16,6 +16,7 @@ const (
 	KILLED_REGEX            = `Kill: (?P<killer_id>\d+) (?P<victim_id>\d+) (?P<mean_id>\d+)`
 	JOIN_GAME_REGEX         = `ClientConnect: (?P<player_id>\d+)`
 	USER_INFO_CHANGED_REGEX = `ClientUserinfoChanged: (?P<player_id>\d+) n\\(?P<player>.*?)\\`
+	DISCONNECT_GAME_REGEX   = `ClientDisconnect: (?P<player_id>\d+)`
 )
 
 type Sequential struct {
@@ -50,6 +51,7 @@ func processMatches(scanner *bufio.Scanner) (map[string]*model.Match, error) {
 	joinGameRegex := regexp.MustCompile(JOIN_GAME_REGEX)
 	userInfoChangedRegex := regexp.MustCompile(USER_INFO_CHANGED_REGEX)
 	killedRegex := regexp.MustCompile(KILLED_REGEX)
+	disconnectGameRegex := regexp.MustCompile(DISCONNECT_GAME_REGEX)
 
 	totalGames := 0
 
@@ -74,6 +76,16 @@ func processMatches(scanner *bufio.Scanner) (map[string]*model.Match, error) {
 				continue
 			}
 			match.AddPlayer(playerID)
+
+		case disconnectGameRegex.MatchString(line):
+			m := disconnectGameRegex.FindStringSubmatch(line)
+			player := m[1]
+
+			playerID, err := strconv.Atoi(player)
+			if err != nil {
+				continue
+			}
+			match.DisconnectPlayer(playerID)
 
 		case userInfoChangedRegex.MatchString(line):
 			m := userInfoChangedRegex.FindStringSubmatch(line)
