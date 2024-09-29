@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	MAX_WORKERS = 100
+	MAX_WORKERS = 5
 )
 
 type Job struct {

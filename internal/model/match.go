@@ -1,7 +1,6 @@
 package model
 
 import (
-	"log/slog"
 	"slices"
 
 	"github.com/enohr/quake-log-parser/util"
@@ -43,7 +42,6 @@ func (m *Match) UpdateUserInfo(playerID int, playerName string) error {
 	oldHashID := util.GenerateNameFNVHash(playerName)
 
 	if player, ok := m.Players[oldHashID]; ok {
-		slog.Info("User has logged again. Restoring his kills", "id", playerID, "name", playerName, "kills", player.Kills)
 		m.Players[playerID] = player
 		delete(m.Players, oldHashID)
 		return nil

@@ -16,7 +16,7 @@ func main() {
 	inputFile := flag.String("input_file", "", "The path of file to be parsed")
 
 	flag.Usage = func() {
-		log.Println("Usage %s -type [parallel|sequential] -input_file [file]\n", os.Args[0])
+		log.Printf("Usage %s -type [parallel|sequential] -input_file [file]\n", os.Args[0])
 		flag.PrintDefaults()
 	}
 	flag.Parse()
