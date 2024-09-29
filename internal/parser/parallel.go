@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"strconv"
 	"sync"
 
 	"github.com/enohr/quake-log-parser/internal/model"
@@ -66,7 +65,7 @@ func (s *Parallel) Parse(file string) (map[string]*model.Match, error) {
 	matches := make(map[string]*model.Match)
 
 	for result := range results {
-		matchName := fmt.Sprintf("game-%d", result.MatchNumber)
+		matchName := fmt.Sprintf("game_%d", result.MatchNumber)
 		matches[matchName] = result.Match
 	}
 
@@ -77,65 +76,10 @@ func parseChunk(chunk []string) *model.Match {
 	match := model.NewMatch()
 
 	for _, line := range chunk {
-		switch {
-		case joinGameRegex.MatchString(line):
-			m := joinGameRegex.FindStringSubmatch(line)
-			player := m[1]
-
-			playerID, err := strconv.Atoi(player)
-			if err != nil {
-				continue
-			}
-			match.AddPlayer(playerID)
-
-		case disconnectGameRegex.MatchString(line):
-			m := disconnectGameRegex.FindStringSubmatch(line)
-			player := m[1]
-
-			playerID, err := strconv.Atoi(player)
-			if err != nil {
-				continue
-			}
-			match.DisconnectPlayer(playerID)
-
-		case userInfoChangedRegex.MatchString(line):
-			m := userInfoChangedRegex.FindStringSubmatch(line)
-			player, playerName := m[1], m[2]
-
-			playerID, err := strconv.Atoi(player)
-			if err != nil {
-				continue
-			}
-			match.UpdateUserInfo(playerID, playerName)
-
-		case killedRegex.MatchString(line):
-			m := killedRegex.FindStringSubmatch(line)
-
-			killer, victim, mean := m[1], m[2], m[3]
-
-			killerID, err := strconv.Atoi(killer)
-
-			if err != nil {
-				continue
-			}
-
-			victimID, err := strconv.Atoi(victim)
-
-			if err != nil {
-				continue
-			}
-
-			meanID, err := strconv.Atoi(mean)
-
-			if err != nil {
-				continue
-			}
-
-			match.ProcessKill(killerID, victimID, meanID)
-		}
+		processLine(line, match)
 	}
-	return match
 
+	return match
 }
 
 func splitIntoChunks(filename string) ([][]string, error) {
