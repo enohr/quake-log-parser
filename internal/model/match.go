@@ -10,19 +10,22 @@ const (
 )
 
 type Match struct {
-	TotalKills int
-	Players    map[int]*Player
+	TotalKills   int
+	Players      map[int]*Player
+	MeansOfDeath map[MeanOfDeath]int
 }
 
 type MatchJSON struct {
-	TotalKills int
-	Players    []string
-	Kills      map[string]int
+	TotalKills   int
+	Players      []string
+	Kills        map[string]int
+	MeansOfDeath map[string]int
 }
 
 func NewMatch() *Match {
 	match := &Match{
-		Players: make(map[int]*Player),
+		Players:      make(map[int]*Player),
+		MeansOfDeath: make(map[MeanOfDeath]int),
 	}
 	return match
 }
@@ -74,19 +77,25 @@ func (m *Match) ProcessKill(killerID, victimID, meanID int) error {
 	} else if killerID != victimID {
 		m.Players[killerID].Kills++
 	}
+
+	m.MeansOfDeath[MeanOfDeath(meanID)]++
 	m.TotalKills++
 	return nil
 }
 
 func (m *Match) ToMatchJSON() MatchJSON {
 	matchJson := MatchJSON{
-		Players: make([]string, 0),
-		Kills:   make(map[string]int),
+		Players:      make([]string, 0),
+		Kills:        make(map[string]int),
+		MeansOfDeath: make(map[string]int),
 	}
 
 	for _, player := range m.Players {
 		matchJson.Players = append(matchJson.Players, player.Name)
 		matchJson.Kills[player.Name] = player.Kills
+	}
+	for mean, kills := range m.MeansOfDeath {
+		matchJson.MeansOfDeath[mean.String()] = kills
 	}
 	matchJson.TotalKills = m.TotalKills
 
