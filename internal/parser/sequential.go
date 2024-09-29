@@ -5,18 +5,9 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
-	"regexp"
 	"strconv"
 
 	"github.com/enohr/quake-log-parser/internal/model"
-)
-
-const (
-	INIT_GAME_REGEX         = `InitGame:\s.*`
-	KILLED_REGEX            = `Kill: (?P<killer_id>\d+) (?P<victim_id>\d+) (?P<mean_id>\d+)`
-	JOIN_GAME_REGEX         = `ClientConnect: (?P<player_id>\d+)`
-	USER_INFO_CHANGED_REGEX = `ClientUserinfoChanged: (?P<player_id>\d+) n\\(?P<player>.*?)\\`
-	DISCONNECT_GAME_REGEX   = `ClientDisconnect: (?P<player_id>\d+)`
 )
 
 type Sequential struct {
@@ -46,12 +37,6 @@ func (s *Sequential) Parse(file string) (map[string]*model.Match, error) {
 func processMatches(scanner *bufio.Scanner) (map[string]*model.Match, error) {
 	var match *model.Match
 	matches := make(map[string]*model.Match)
-
-	initGameRegex := regexp.MustCompile(INIT_GAME_REGEX)
-	joinGameRegex := regexp.MustCompile(JOIN_GAME_REGEX)
-	userInfoChangedRegex := regexp.MustCompile(USER_INFO_CHANGED_REGEX)
-	killedRegex := regexp.MustCompile(KILLED_REGEX)
-	disconnectGameRegex := regexp.MustCompile(DISCONNECT_GAME_REGEX)
 
 	totalGames := 0
 
