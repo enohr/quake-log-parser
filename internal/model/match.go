@@ -3,6 +3,7 @@ package model
 import (
 	"hash/fnv"
 	"log/slog"
+	"slices"
 )
 
 const (
@@ -16,10 +17,10 @@ type Match struct {
 }
 
 type MatchJSON struct {
-	TotalKills   int
-	Players      []string
-	Kills        map[string]int
-	MeansOfDeath map[string]int
+	TotalKills   int            `json:"total_kills"`
+	Players      []string       `json:"players"`
+	Kills        map[string]int `json:"kills"`
+	MeansOfDeath map[string]int `json:"kills_by_means"`
 }
 
 func NewMatch() *Match {
@@ -97,6 +98,8 @@ func (m *Match) ToMatchJSON() MatchJSON {
 	for mean, kills := range m.MeansOfDeath {
 		matchJson.MeansOfDeath[mean.String()] = kills
 	}
+
+	slices.Sort(matchJson.Players)
 	matchJson.TotalKills = m.TotalKills
 
 	return matchJson

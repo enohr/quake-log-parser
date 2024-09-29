@@ -46,7 +46,7 @@ func processMatches(scanner *bufio.Scanner) (map[string]*model.Match, error) {
 		switch {
 		case initGameRegex.MatchString(line):
 			if match != nil {
-				name := fmt.Sprintf("game-%d", totalGames)
+				name := fmt.Sprintf("game_%d", totalGames)
 				matches[name] = match
 				totalGames++
 			}
@@ -109,7 +109,7 @@ func processMatches(scanner *bufio.Scanner) (map[string]*model.Match, error) {
 		}
 	}
 	if match != nil {
-		name := fmt.Sprintf("game-%d", totalGames)
+		name := fmt.Sprintf("game_%d", totalGames)
 		matches[name] = match
 		totalGames++
 	}

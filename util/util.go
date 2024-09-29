@@ -1,24 +1,22 @@
 package util
 
 import (
-	"encoding/json"
 	"os"
-
-	"github.com/enohr/quake-log-parser/internal/model"
+	"path/filepath"
 )
 
-func SaveJSONOutput(matches map[string]model.MatchJSON, outputFilename string) error {
+func SaveToFile(filename string, content []byte) error {
+	dir := filepath.Dir(filename)
 
-	content, err := json.MarshalIndent(matches, "", " ")
-
-	if err != nil {
+	if err := os.MkdirAll(dir, os.ModePerm); err != nil {
 		return err
 	}
 
-	outputFile, err := os.Create(outputFilename)
+	outputFile, err := os.Create(filename)
 	if err != nil {
 		return err
 	}
+	defer outputFile.Close()
 
 	_, err = outputFile.Write(content)
 

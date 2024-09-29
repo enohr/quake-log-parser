@@ -1,0 +1,33 @@
+package output
+
+import (
+	"encoding/json"
+
+	"github.com/enohr/quake-log-parser/internal/model"
+	"github.com/enohr/quake-log-parser/util"
+)
+
+func SaveOutput(matches map[string]*model.Match, filename string) error {
+	matchesJSON, err := matchToJSON(matches)
+
+	if err != nil {
+		return err
+	}
+
+	j, err := json.MarshalIndent(matchesJSON, "", " ")
+
+	if err != nil {
+		return err
+	}
+
+	return util.SaveToFile(filename, j)
+}
+
+func matchToJSON(matches map[string]*model.Match) (map[string]model.MatchJSON, error) {
+	matchesJSON := make(map[string]model.MatchJSON)
+	for k, v := range matches {
+		matchesJSON[k] = v.ToMatchJSON()
+	}
+
+	return matchesJSON, nil
+}
