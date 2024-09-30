@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"log"
+	"log/slog"
 	"os"
 
 	"github.com/enohr/quake-log-parser/internal/output"
@@ -42,5 +43,7 @@ func main() {
 	if err := output.SaveOutput(matches, outputFilename); err != nil {
 		log.Fatalf(err.Error())
 	}
+
+	slog.Info("Report saved on output/output.json file")
 
 }

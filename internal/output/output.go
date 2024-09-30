@@ -2,12 +2,14 @@ package output
 
 import (
 	"encoding/json"
+	"log/slog"
 
 	"github.com/enohr/quake-log-parser/internal/model"
 	"github.com/enohr/quake-log-parser/util"
 )
 
 func SaveOutput(matches map[string]*model.Match, filename string) error {
+	slog.Info("Transforming matches to output format")
 	matchesJSON, err := matchToJSON(matches)
 
 	if err != nil {

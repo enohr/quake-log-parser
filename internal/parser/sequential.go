@@ -23,12 +23,12 @@ func (s *Sequential) Parse(file string) (map[string]*model.Match, error) {
 	}
 	defer f.Close()
 
-	slog.Info("Starting parsing log")
+	slog.Info("Starting sequential parsing")
 
 	scanner := bufio.NewScanner(f)
 	matches, err := parseMatches(scanner)
 
-	slog.Info("Log parsing has finished")
+	slog.Info("Sequential parsing has ended")
 
 	return matches, err
 }
@@ -49,6 +49,7 @@ func parseMatches(scanner *bufio.Scanner) (map[string]*model.Match, error) {
 
 		if newMatch {
 			if match != nil {
+				slog.Info("Finish processing a match.", "Match number", matchNumber)
 				name := fmt.Sprintf("game_%d", matchNumber)
 				matches[name] = match
 				matchNumber++
@@ -59,6 +60,7 @@ func parseMatches(scanner *bufio.Scanner) (map[string]*model.Match, error) {
 
 	}
 	if match != nil {
+		slog.Info("Finish processing a match.", "Match number", matchNumber)
 		name := fmt.Sprintf("game_%d", matchNumber)
 		matches[name] = match
 		matchNumber++

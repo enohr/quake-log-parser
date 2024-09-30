@@ -2,6 +2,7 @@ package parser
 
 import (
 	"fmt"
+	"log/slog"
 	"sync"
 
 	"github.com/enohr/quake-log-parser/internal/model"
@@ -39,6 +40,7 @@ func (s *Parallel) Parse(file string) (map[string]*model.Match, error) {
 	jobs := make(chan Job, len(matchChunks))
 	results := make(chan Result, len(matchChunks))
 
+	slog.Info("Starting parallel parsing")
 	for i := 0; i < MAX_WORKERS; i++ {
 		wg.Add(1)
 		go func() {
@@ -51,6 +53,7 @@ func (s *Parallel) Parse(file string) (map[string]*model.Match, error) {
 	}
 
 	for matchNumber, chunk := range matchChunks {
+		slog.Info("Finish processing a match.", "Match number", matchNumber)
 		jobs <- Job{MatchNumber: matchNumber, Chunk: chunk}
 	}
 	close(jobs)
@@ -66,6 +69,8 @@ func (s *Parallel) Parse(file string) (map[string]*model.Match, error) {
 		matchName := fmt.Sprintf("game_%d", result.MatchNumber)
 		matches[matchName] = result.Match
 	}
+
+	slog.Info("Parallel parsing has ended")
 
 	return matches, nil
 }
