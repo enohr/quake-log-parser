@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 )
 
+// Save an array of bytes to the given filename
 func SaveToFile(filename string, content []byte) error {
 	dir := filepath.Dir(filename)
 
@@ -31,6 +32,7 @@ func SaveToFile(filename string, content []byte) error {
 
 }
 
+// Generates a hash of given username
 func GenerateNameFNVHash(name string) int {
 	h := fnv.New64a()
 	h.Write([]byte(name))

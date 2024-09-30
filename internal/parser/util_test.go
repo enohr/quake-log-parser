@@ -7,6 +7,7 @@ import (
 	"github.com/enohr/quake-log-parser/internal/model"
 )
 
+// Tests the parse of a line with user connection
 func TestParseUserConnectLine(t *testing.T) {
 	testCases := []struct {
 		name     string
@@ -34,6 +35,7 @@ func TestParseUserConnectLine(t *testing.T) {
 	}
 }
 
+// Tests the parse of a line with user updating info
 func TestParseUserUpdateInfoLine(t *testing.T) {
 	testCases := []struct {
 		name     string
@@ -62,6 +64,7 @@ func TestParseUserUpdateInfoLine(t *testing.T) {
 	}
 }
 
+// Tests the parse of a line with user disconnection
 func TestParseUserDisconnectLine(t *testing.T) {
 	testCases := []struct {
 		name     string
@@ -90,6 +93,7 @@ func TestParseUserDisconnectLine(t *testing.T) {
 	}
 }
 
+// Tests the parse of a line with user kill
 func TestParseUserKillLine(t *testing.T) {
 	testCases := []struct {
 		name     string
@@ -124,6 +128,7 @@ func TestParseUserKillLine(t *testing.T) {
 	}
 }
 
+// Tests the parse of a line with world kill
 func TestParseWorldKillLine(t *testing.T) {
 	testCases := []struct {
 		name     string
@@ -156,6 +161,7 @@ func TestParseWorldKillLine(t *testing.T) {
 	}
 }
 
+// Tests the parse of multiple lines with kills
 func TestParseMultipleUserKillLines(t *testing.T) {
 	testCases := []struct {
 		name     string

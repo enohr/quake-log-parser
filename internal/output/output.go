@@ -27,6 +27,8 @@ func SaveOutput(matches map[string]*model.Match, filename string) error {
 
 func matchToJSON(matches map[string]*model.Match) (map[string]model.MatchJSON, error) {
 	matchesJSON := make(map[string]model.MatchJSON)
+
+	// Transform each match to the output format
 	for k, v := range matches {
 		matchesJSON[k] = v.ToMatchJSON()
 	}

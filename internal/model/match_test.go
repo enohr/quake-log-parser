@@ -5,6 +5,7 @@ import (
 	"testing"
 )
 
+// Tests a user connection
 func TestUserConnect(t *testing.T) {
 	testCases := []struct {
 		name     string
@@ -33,6 +34,7 @@ func TestUserConnect(t *testing.T) {
 
 }
 
+// Test a user changing nickname
 func TestUpdateUserInfo(t *testing.T) {
 	testCases := []struct {
 		name       string
@@ -63,6 +65,7 @@ func TestUpdateUserInfo(t *testing.T) {
 	}
 }
 
+// Test if keeps the kill count after chaning nickname
 func TestUserChangeNicknameKeepKills(t *testing.T) {
 	testCases := []struct {
 		name          string
@@ -105,6 +108,7 @@ func TestUserChangeNicknameKeepKills(t *testing.T) {
 	}
 }
 
+// Test user disconnect
 func TestUserDisconnect(t *testing.T) {
 	testCases := []struct {
 		name     string
@@ -131,6 +135,7 @@ func TestUserDisconnect(t *testing.T) {
 	}
 }
 
+// Test single user kill
 func TestUserKill(t *testing.T) {
 	testCases := []struct {
 		name     string
@@ -170,6 +175,7 @@ func TestUserKill(t *testing.T) {
 	}
 }
 
+// Test a single world kill
 func TestWorldKill(t *testing.T) {
 	testCases := []struct {
 		name     string
@@ -207,6 +213,7 @@ func TestWorldKill(t *testing.T) {
 	}
 }
 
+// Test multiple user kills
 func TestMultipleUserKills(t *testing.T) {
 	type KillEvent struct {
 		killerID int
@@ -295,6 +302,7 @@ func TestMultipleUserKills(t *testing.T) {
 	}
 }
 
+// Test multiple world kills
 func TestMultipleWorldKills(t *testing.T) {
 	type KillEvent struct {
 		killerID int
@@ -369,6 +377,8 @@ func TestMultipleWorldKills(t *testing.T) {
 
 }
 
+// Test if after a player has disconnected we keep track
+// of their kill history
 func TestUserDisconnectKeepingHistory(t *testing.T) {
 	testCases := []struct {
 		name       string
@@ -403,6 +413,7 @@ func TestUserDisconnectKeepingHistory(t *testing.T) {
 
 }
 
+// Test if after user reconnects we restore its kills
 func TestUserReconnects(t *testing.T) {
 	testCases := []struct {
 		name       string
@@ -444,6 +455,7 @@ func TestUserReconnects(t *testing.T) {
 	}
 }
 
+// Test parsing a Match model to the output format model
 func TestParsingMatchToMatchJSON(t *testing.T) {
 
 	testCases := []struct {

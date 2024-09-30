@@ -8,12 +8,14 @@ import (
 	"github.com/enohr/quake-log-parser/internal/model"
 )
 
+// Receive each line, parses it and update the match information
+// Returns true if a new match has started
 func parseLine(line string, match *model.Match) (bool, error) {
 	switch {
-	case initGameRegex.MatchString(line):
+	case initGameRegex.MatchString(line): // Checks if a new match has started
 		return true, nil
 
-	case joinGameRegex.MatchString(line):
+	case joinGameRegex.MatchString(line): // Checks if user has joined the game
 		m := joinGameRegex.FindStringSubmatch(line)
 		player := m[1]
 
@@ -23,7 +25,7 @@ func parseLine(line string, match *model.Match) (bool, error) {
 		}
 		match.AddPlayer(playerID)
 
-	case disconnectGameRegex.MatchString(line):
+	case disconnectGameRegex.MatchString(line): // Checks if user has disconnected
 		m := disconnectGameRegex.FindStringSubmatch(line)
 		player := m[1]
 
@@ -33,7 +35,7 @@ func parseLine(line string, match *model.Match) (bool, error) {
 		}
 		match.DisconnectPlayer(playerID)
 
-	case userInfoChangedRegex.MatchString(line):
+	case userInfoChangedRegex.MatchString(line): // Check if the user changed some info
 		m := userInfoChangedRegex.FindStringSubmatch(line)
 		player, playerName := m[1], m[2]
 
@@ -43,7 +45,7 @@ func parseLine(line string, match *model.Match) (bool, error) {
 		}
 		match.UpdateUserInfo(playerID, playerName)
 
-	case killedRegex.MatchString(line):
+	case killedRegex.MatchString(line): // Check if theres a kill event
 		m := killedRegex.FindStringSubmatch(line)
 
 		killer, victim, mean := m[1], m[2], m[3]
@@ -71,6 +73,7 @@ func parseLine(line string, match *model.Match) (bool, error) {
 	return false, nil
 }
 
+// Receives a file name and returns a matrix of each match found
 func splitIntoChunks(filename string) ([][]string, error) {
 	file, err := os.Open(filename)
 	if err != nil {

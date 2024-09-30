@@ -16,6 +16,8 @@ func newSequential() *Sequential {
 	return &Sequential{}
 }
 
+// Based on a received file, parse the log in serial and returns a
+// map with information about each match found
 func (s *Sequential) Parse(file string) (map[string]*model.Match, error) {
 	f, err := os.Open(file)
 	if err != nil {
@@ -47,6 +49,7 @@ func parseMatches(scanner *bufio.Scanner) (map[string]*model.Match, error) {
 			return nil, err
 		}
 
+		// If has a current match, add it to the result map
 		if newMatch {
 			if match != nil {
 				slog.Info("Finish processing a match.", "Match number", matchNumber)
@@ -59,6 +62,8 @@ func parseMatches(scanner *bufio.Scanner) (map[string]*model.Match, error) {
 		}
 
 	}
+
+	// Adds the last match to the result map
 	if match != nil {
 		slog.Info("Finish processing a match.", "Match number", matchNumber)
 		name := fmt.Sprintf("game_%d", matchNumber)

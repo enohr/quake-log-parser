@@ -4,6 +4,7 @@ import (
 	"testing"
 )
 
+// Test hashes for multiple players names
 func TestGenerateNameFNVHash(t *testing.T) {
 	testCases := []struct {
 		name       string

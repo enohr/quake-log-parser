@@ -7,6 +7,7 @@ import (
 	"github.com/enohr/quake-log-parser/internal/model"
 )
 
+// Test if the parsing from model to the output model is correct
 func TestParsingMatchesToMatchesJSON(t *testing.T) {
 
 	testCases := []struct {

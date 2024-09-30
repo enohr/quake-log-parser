@@ -10,6 +10,7 @@ type Parser interface {
 
 type ParserType int
 
+// Creates a parser based on ParserType
 func NewParser(pt ParserType) Parser {
 	switch pt {
 	case ParallelParser:
@@ -33,6 +34,7 @@ var parserTypeStrings = map[string]ParserType{
 	"sequential": SequentialParser,
 }
 
+// Returns the ParserType based on received String
 func StringToParserType(parserType string) ParserType {
 	if pt, ok := parserTypeStrings[parserType]; ok {
 		return pt
@@ -40,6 +42,7 @@ func StringToParserType(parserType string) ParserType {
 	return UnknownParser
 }
 
+// Validate received parser type
 func ValidateParserType(parserType string) bool {
 	pt := StringToParserType(parserType)
 	return pt != UnknownParser
