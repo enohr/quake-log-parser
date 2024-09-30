@@ -20,8 +20,8 @@ func TestParsingMatchesToMatchesJSON(t *testing.T) {
 				"game_1": &model.Match{
 					TotalKills: 5,
 					Players: map[int]*model.Player{
-						1: {Name: "Jogador 1", Kills: 3},
-						2: {Name: "Jogador 2", Kills: 2},
+						1: {Name: "Jogador 1", Kills: 2},
+						2: {Name: "Jogador 2", Kills: 3},
 					},
 					MeansOfDeath: map[model.MeanOfDeath]int{
 						7:  2,
@@ -38,8 +38,12 @@ func TestParsingMatchesToMatchesJSON(t *testing.T) {
 						"Jogador 2",
 					},
 					Kills: map[string]int{
-						"Jogador 1": 3,
-						"Jogador 2": 2,
+						"Jogador 1": 2,
+						"Jogador 2": 3,
+					},
+					Leaderboard: []string{
+						"Jogador 2",
+						"Jogador 1",
 					},
 					MeansOfDeath: map[string]int{
 						"MOD_ROCKET_SPLASH": 2,

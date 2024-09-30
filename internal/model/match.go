@@ -2,6 +2,7 @@ package model
 
 import (
 	"slices"
+	"sort"
 
 	"github.com/enohr/quake-log-parser/util"
 )
@@ -20,6 +21,7 @@ type MatchJSON struct {
 	TotalKills   int            `json:"total_kills"`
 	Players      []string       `json:"players"`
 	Kills        map[string]int `json:"kills"`
+	Leaderboard  []string       `json:"leaderboard"`
 	MeansOfDeath map[string]int `json:"kills_by_means"`
 }
 
@@ -81,11 +83,13 @@ func (m *Match) ToMatchJSON() MatchJSON {
 	matchJson := MatchJSON{
 		Players:      make([]string, 0),
 		Kills:        make(map[string]int),
+		Leaderboard:  make([]string, 0),
 		MeansOfDeath: make(map[string]int),
 	}
 
 	for _, player := range m.Players {
 		matchJson.Players = append(matchJson.Players, player.Name)
+		matchJson.Leaderboard = append(matchJson.Leaderboard, player.Name)
 		matchJson.Kills[player.Name] = player.Kills
 	}
 	for mean, kills := range m.MeansOfDeath {
@@ -94,6 +98,15 @@ func (m *Match) ToMatchJSON() MatchJSON {
 
 	slices.Sort(matchJson.Players)
 	matchJson.TotalKills = m.TotalKills
+
+	sort.Slice(matchJson.Leaderboard, func(i, j int) bool {
+		p1, p2 := matchJson.Leaderboard[i], matchJson.Leaderboard[j]
+
+		k1 := matchJson.Kills[p1]
+		k2 := matchJson.Kills[p2]
+
+		return k1 > k2
+	})
 
 	return matchJson
 }

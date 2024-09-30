@@ -475,6 +475,10 @@ func TestParsingMatchToMatchJSON(t *testing.T) {
 					"Jogador 1": 3,
 					"Jogador 2": 2,
 				},
+				Leaderboard: []string{
+					"Jogador 1",
+					"Jogador 2",
+				},
 				MeansOfDeath: map[string]int{
 					"MOD_ROCKET_SPLASH": 2,
 					"MOD_RAILGUN":       3,
